@@ -7,6 +7,8 @@ import argparse
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
+RAND_CEIL = int(os.getenv('RANDOM_NUMBER_CEILING'))
+FAIL_CEIL = int(os.getenv('FAIL_CIELING'))
 bot = commands.Bot(command_prefix = 'm.')
 
 # static directory of available channels to send mail to.
@@ -119,9 +121,9 @@ async def send(ctx, **flags):
         return
 
     output = discord.Embed(type = "rich", title = "Mail Delivery System")
-    roll = random.randint(1,20)
+    roll = random.randint(1,RAND_CEIL)
     print("Roll: ", roll)
-    if roll <= 3:
+    if roll <= FAIL_CEIL:
         # Embed Text if the mail fails to send
         output.description = "The Courier died along the way."
         output.add_field(name = "Roll", value = str(roll), inline = True)
