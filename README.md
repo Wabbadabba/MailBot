@@ -4,13 +4,16 @@ This is a Discord Bot made in Python 3.8. It is intended for a homebrew Dungeons
 
 ### Prerequisites
 
-This bot uses Discord.py and its extention discord-flags
+This bot uses Discord.py, dotenv, and its extention discord-flags
 
 ```
 pip install -U discord.py
 ```
 ```
 pip install discord-flags
+```
+```
+pip install -U python-dotenv
 ```
 
 ## Commands
