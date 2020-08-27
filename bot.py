@@ -12,16 +12,16 @@ FAIL_CEIL = int(os.getenv('FAIL_CIELING'))
 bot = commands.Bot(command_prefix = 'm.')
 
 # static directory of available channels to send mail to.
-channel_dir = {'cv':['Circle of Vibruth (cv)','cv-mailroom'],
-                'cr':['Corinthian Republic (cr)','cr-mailroom'],
-                'ka':['Knightdom of Avaline (ka)','ka-mailroom'],
-                'ks':['Kingdom of Sidheil (rs)','rs-mailroom'],
-                'ek':['Electorate of Kryn (ek)','ek-mailroom'],
-                'rs':['Republic in Shadow (rs)','rs-mailroom'],
-                'st':['Sebyakhni Tsarstvo (st)','st-mailroom'],
-                'saa':['Sect of Amaranth Anthesis (saa)','saa-mailroom'],
-                'tf':['The Fylkirach (tf)','tf-mailroom'],
-                'ie':['Impiritus Ecclesia (ie)','impiritus-mail']
+channel_dir = {'cv':['Circle of Vibruth','cv-mailroom'],
+                'cr':['Corinthian Republic','cr-mailroom'],
+                'ka':['Knightdom of Avaline','ka-mailroom'],
+                'ks':['Kingdom of Sidheil','rs-mailroom'],
+                'ek':['Electorate of Kryn','ek-mailroom'],
+                'rs':['Republic in Shadow','rs-mailroom'],
+                'st':['Sebyakhni Tsarstvo','st-mailroom'],
+                'saa':['Sect of Amaranth Anthesis','saa-mailroom'],
+                'tf':['The Fylkirach','tf-mailroom'],
+                'ie':['Impiritus Ecclesia','impiritus-mail']
             }
 
 @bot.listen()
@@ -47,8 +47,18 @@ async def mList(ctx):
     '''
 
     listing = discord.Embed(type = "rich", title = "Mailing List")
-    x = [ faction[0] for faction in list(channel_dir.values()) ]
-    listing.description = "The following is a list of Channels that mail can be sent to:" + "\n\n" + "\n".join(x)
+
+    list_string = "The following is a list of Channels that mail can be sent to:\n\n```\nCode | Name\n-----|---------------------------\n"
+    
+    for channel in channel_dir:
+        if len(channel) == 2:
+            list_string += "{0}   | {1}\n".format(channel, channel_dir[channel][0])
+        elif len(channel) == 3:
+            list_string += "{0}  | {1}\n".format(channel, channel_dir[channel][0])
+
+    list_string += "```"
+    listing.description = list_string   
+
     await ctx.send(embed = listing)
 
 @flags.add_flag("-code", type = str, default = " ")
@@ -67,16 +77,18 @@ async def addList(ctx, **flags):
     Returns:
     Embed that says the described faction was added to the list.
     '''
-
-    if ' ' in list(flags.values()):
-        flag_mismatch = discord.Embed(type = "rich", 
+    def sendhelp():
+        command_error = discord.Embed(type = "rich", 
                                         title = "Help: Adding to the List",
                                         description = "Syntax\n`m.send -code [XX] -name [NAME] -channel [CHANNEL NAME]`\n\n*Note:* Multiple words must be wrapped in quotes `' '`"
                                     )
-        flag_mismatch.add_field(name = "`-code`", value = "Two or Three letter code for which faction you are adding.", inline = False)
-        flag_mismatch.add_field(name = "`-name`", value = "Name of the faction being added.", inline = False)
-        flag_mismatch.add_field(name = "`-channel`", value = "Name of the channel of the new recipient", inline = False)
-        await ctx.send(embed = flag_mismatch)
+        command_error.add_field(name = "`-code`", value = "Two or Three letter code for which faction you are adding.", inline = False)
+        command_error.add_field(name = "`-name`", value = "Name of the faction being added.", inline = False)
+        command_error.add_field(name = "`-channel`", value = "Name of the channel of the new recipient", inline = False)
+        return command_error
+        
+    if ' ' in list(flags.values()):
+        await ctx.send(embed = sendhelp())
         return
     
     channel_dir[flags["code"]] = [flags["name"],flags["channel"]]
@@ -107,17 +119,20 @@ async def send(ctx, **flags):
     An Embed stating whether or not the message succeeded, a summary of the message, and the random number.
     '''
 
-    if ' ' in list(flags.values()):
-        # If any flag is missing, display this help message
-        flag_mismatch = discord.Embed(type = "rich", 
+    def sendhelp():
+        command_error = discord.Embed(type = "rich", 
                                         title = "Help: Sending a Message",
                                         description = "Syntax\n`m.send -rec [XX] -to [RECIPIENT] -from [SENDER] -m [Message]`\n\n*Note:* Multiple words must be wrapped in quotes `' '`"
                                     )
-        flag_mismatch.add_field(name = "`-rec`", value = "Two or Three letter code for which faction you are sending mail to.", inline = False)
-        flag_mismatch.add_field(name = "`-to`", value = "Name of the person or group you are sending mail to.", inline = False)
-        flag_mismatch.add_field(name = "`-from`", value = "Name of the person sending the mail.", inline = False)
-        flag_mismatch.add_field(name = "`-m`", value = "Text of the actual message being sent.", inline = False)
-        await ctx.send(embed = flag_mismatch)
+        command_error.add_field(name = "`-rec`", value = "Two or Three letter code for which faction you are sending mail to.\nSee `m.mList` for valid recipients.", inline = False)
+        command_error.add_field(name = "`-to`", value = "Name of the person or group you are sending mail to.", inline = False)
+        command_error.add_field(name = "`-from`", value = "Name of the person sending the mail.", inline = False)
+        command_error.add_field(name = "`-m`", value = "Text of the actual message being sent.", inline = False)
+        return command_error
+
+    if ' ' in list(flags.values()) or flags['rec'] not in channel_dir:
+        # If any flag is missing, display the help message
+        await ctx.send(embed = sendhelp())
         return
 
     output = discord.Embed(type = "rich", title = "Mail Delivery System")
