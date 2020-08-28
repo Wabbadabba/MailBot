@@ -16,11 +16,18 @@ pip install discord-flags
 pip install -U python-dotenv
 ```
 
+Alternatively, you can use the [mailbot-requirements.txt](https://github.com/Wabbadabba/MailBot/blob/master/mailbot-requirements.txt) to install all dependencies
+```
+pip install -r mailbot-requirements.txt
+```
+
 ## Commands
-* `m.mList` - Shows a list of all valid recipients
-* `m.addList` - Adds a new entry into the list of valid recipients
-* `m.send` - Picks a random number between 1 and 20, and sends a message if the number is above 3.
-* `m.help` - Displays help information.
+Command | Description
+------- | -----------
+`m.mList` | Shows a list of all valid recipients
+`m.addList` | Adds a new entry into the list of valid recipients
+`m.send` | Picks a random number between 1 and 20, and sends a message if the number is above 3.
+`m.help` | Displays help information.
 
 ## Built With
 
