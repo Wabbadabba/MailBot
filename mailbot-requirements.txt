@@ -1,0 +1,7 @@
+#
+####### requirements.txt #######
+#
+discord.py
+discord-flags
+python-dotenv
+#
